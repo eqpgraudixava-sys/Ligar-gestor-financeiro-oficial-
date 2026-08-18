@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão Financeira</title>
+  <style>
+    :root {
+      --bg-body: #0b0f19;
+      --bg-card: #151c2c;
+      --bg-input: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.1);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.1);
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --nubank: #820ad1;
+      --nubank-hover: #6d08b1;
+      --border: #26334d;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-primary);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 850px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    header {
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    /* Dashboard */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      padding: 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card span {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card h2 {
+      font-size: 1.7rem;
+      font-weight: 700;
+    }
+
+    .card.balance h2 { color: var(--text-primary); }
+    .card.income h2 { color: var(--green); }
+    .card.expense h2 { color: var(--red); }
+
+    /* Formulário */
+    .form-box {
+      background-color: var(--bg-card);
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-submit {
+      background-color: var(--accent);
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      grid-column: 1 / -1;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* Histórico */
+    .history-box {
+      background-color: var(--bg-card);
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .history-box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+
+    .list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background-color: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      border-left: 4px solid var(--border);
+    }
+
+    .item.income { 
+      border-left-color: var(--green); 
+      background-color: var(--green-bg);
+    }
+    
+    .item.expense { 
+      border-left-color: var(--red); 
+      background-color: var(--red-bg);
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .item-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .item-date {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .item-value {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .income .item-amount { color: var(--green); }
+    .expense .item-amount { color: var(--red); }
+
+    .btn-del {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 4px;
+      width: auto;
+      line-height: 1;
+    }
+
+    .btn-del:hover {
+      color: var(--red);
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 20px 0;
+      font-size: 0.9rem;
+    }
+
+    /* Bloco do Nubank */
+    .support-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .support-box p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .btn-support {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--nubank);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      width: auto;
+    }
+
+    .btn-support:hover {
+      background-color: var(--nubank-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-support:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <h1>Gestão Financeira</h1>
+    </header>
+
+    <!-- Resumo de Saldos -->
+    <section class="dashboard">
+      <div class="card balance">
+        <span>Saldo Total</span>
+        <h2 id="total-balance">R$ 0,00</h2>
+      </div>
+      <div class="card income">
+        <span>Entradas</span>
+        <h2 id="total-income">R$ 0,00</h2>
+      </div>
+      <div class="card expense">
+        <span>Saídas</span>
+        <h2 id="total-expense">R$ 0,00</h2>
+      </div>
+    </section>
+
+    <!-- Cadastro de Transação -->
+    <section class="form-box">
+      <h3>Adicionar Movimentação</h3>
+      <form id="finance-form">
+        <div class="form-grid">
+          <input type="text" id="description" placeholder="Descrição (ex: Salário, Mercado)" required>
+          <input type="number" id="amount" placeholder="Valor (R$)" step="0.01" min="0.01" required>
+          <select id="type" required>
+            <option value="income">Entrada (+)</option>
+            <option value="expense">Saída (-)</option>
+          </select>
+          <button type="submit" class="btn-submit">Salvar Registro</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Histórico Completo -->
+    <section class="history-box">
+      <h3>Histórico de Transações</h3>
+      <ul id="transaction-list" class="list"></ul>
+    </section>
+
+    <!-- Apoio via Nubank -->
+    <section class="support-box">
+      <p>Gostou do aplicativo? Apoie o desenvolvimento do projeto!</p>
+      <a 
+        href="https://nubank.com.br/cobrar/wgpmu/6a83e009-8854-4eea-af1a-6f3bf014855d" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="btn-support"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        Apoiar o Projeto com R$ 2,50 via Nubank (Pix)
+      </a>
+    </section>
+  </div>
+
+  <script>
+    let transactions = JSON.parse(localStorage.getItem('app_finances_data')) || [];
+
+    const balanceEl = document.getElementById('total-balance');
+    const incomeEl = document.getElementById('total-income');
+    const expenseEl = document.getElementById('total-expense');
+    const listEl = document.getElementById('transaction-list');
+    const formEl = document.getElementById('finance-form');
+
+    function formatBRL(value) {
+      return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function updateDashboard() {
+      const income = transactions
+        .filter(t => t.type === 'income')
+        .reduce((acc, t) => acc + t.amount, 0);
+
+      const expense = transactions
+        .filter(t => t.type === 'expense')
+        .reduce((acc, t) => acc + t.amount, 0);
+
+      const total = income - expense;
+
+      balanceEl.textContent = formatBRL(total);
+      incomeEl.textContent = formatBRL(income);
+      expenseEl.textContent = formatBRL(expense);
+    }
+
+    function renderHistory() {
+      listEl.innerHTML = '';
+
+      if (transactions.length === 0) {
+        listEl.innerHTML = '<li class="empty">Nenhuma transação cadastrada no momento.</li>';
+        return;
+      }
+
+      transactions.forEach((transaction, index) => {
+        const item = document.createElement('li');
+        item.className = `item ${transaction.type}`;
+
+        const signal = transaction.type === 'income' ? '+' : '-';
+
+        item.innerHTML = `
+          <div class="item-info">
+            <span class="item-title">${transaction.description}</span>
+            <span class="item-date">${transaction.date}</span>
+          </div>
+          <div class="item-value">
+            <span class="item-amount">${signal} ${formatBRL(transaction.amount)}</span>
+            <button class="btn-del" onclick="deleteTransaction(${index})" title="Excluir">&times;</button>
+          </div>
+        `;
+
+        listEl.appendChild(item);
+      });
+    }
+
+    function saveData() {
+      localStorage.setItem('app_finances_data', JSON.stringify(transactions));
+    }
+
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const description = document.getElementById('description').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+      const type = document.getElementById('type').value;
+      const date = new Date().toLocaleDateString('pt-BR');
+
+      if (!description || isNaN(amount)) return;
+
+      transactions.unshift({ description, amount, type, date });
+
+      saveData();
+      updateDashboard();
+      renderHistory();
+
+      formEl.reset();
+    });
+
+    function deleteTransaction(index) {
+      transactions.splice(index, 1);
+      saveData();
+      updateDashboard();
+      renderHistory();
+    }
+
+    updateDashboard();
+    renderHistory();
+  </script>
+</body>
+</html>
